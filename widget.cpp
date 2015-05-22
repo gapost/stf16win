@@ -3,6 +3,7 @@
 
 #include <QTimer>
 #include <QMessageBox>
+#include <QVariant>
 
 #include <modbus.h>
 
@@ -13,13 +14,16 @@ Widget::Widget(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    // insert widgets in every cell in program matrix
     for(int i=0; i<24; i++)
     {
         ui->tblProgram->setItem(i/3,i%3,new QTableWidgetItem());
     }
 
+    // connect to furnace by modbus
     open();
 
+    // start update timer
     QTimer* t = new QTimer(this);
     connect(t,SIGNAL(timeout()),this,SLOT(cycle()));
     t->start(1000);
@@ -34,6 +38,7 @@ Widget::~Widget()
     delete ui;
 }
 
+// connect to furnace by modbus
 bool Widget::open()
 {
     const char* device = "COM1";
@@ -80,12 +85,21 @@ void Widget::cycle()
 
 void Widget::upload()
 {
+    if (!ctx_) {
+        QMessageBox::warning(this,"Error","Not connected to STF-16");
+        return;
+    }
+
     const int ns = 8; // 8 steps
     const int nt = 8*3; // 3 parameters per step
     uint16_t v[nt];
     const int addr = 1280; // starting address
     modbus_t* ctx = (modbus_t*)ctx_;
-    modbus_read_input_registers(ctx,addr,nt,v);
+
+    if (modbus_read_input_registers(ctx,addr,nt,v)==-1) {
+        QMessageBox::critical(this,"Upload failed due to modbus error",QString(modbus_strerror(errno)));
+        return;
+    }
 
     for(int is=0; is<ns; is++)
     {
@@ -100,10 +114,44 @@ void Widget::upload()
 
 void Widget::download()
 {
+    if (!ctx_) {
+        QMessageBox::warning(this,"Error","Not connected to STF-16");
+        return;
+    }
+
+    const int ns = 8; // 8 steps
+    const int nt = 8*3; // 3 parameters per step
+    uint16_t v[nt];
+    const int addr = 1280; // starting address
+    modbus_t* ctx = (modbus_t*)ctx_;
+
+    for(int is=0; is<ns; is++)
+    {
+        for(int j=0; j<3; j++)
+        {
+            QTableWidgetItem* it = ui->tblProgram->item(is,j);
+            v[is*3+j] = it->data(Qt::DisplayRole).toInt();
+        }
+    }
+
+    if (modbus_write_registers(ctx,addr,nt,v)==-1) {
+        QMessageBox::critical(this,"Download failed due to modbus error",QString(modbus_strerror(errno)));
+    }
 
 }
 
 void Widget::zeroout()
 {
+    const int ns = 8; // 8 steps
+    const int nt = 8*3; // 3 parameters per step
 
+
+    for(int is=0; is<ns; is++)
+    {
+        for(int j=0; j<3; j++)
+        {
+            QTableWidgetItem* it = ui->tblProgram->item(is,j);
+            it->setData(Qt::DisplayRole,0);
+        }
+    }
 }
