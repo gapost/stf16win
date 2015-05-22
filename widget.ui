@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>377</width>
+    <width>403</width>
     <height>521</height>
    </rect>
   </property>
@@ -51,7 +51,7 @@
       </font>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="page">
       <property name="geometry">
@@ -59,7 +59,7 @@
         <x>0</x>
         <y>0</y>
         <width>371</width>
-        <height>344</height>
+        <height>228</height>
        </rect>
       </property>
       <property name="font">
@@ -247,7 +247,7 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>359</width>
+        <width>385</width>
         <height>361</height>
        </rect>
       </property>
@@ -278,7 +278,7 @@
           </spacer>
          </item>
          <item>
-          <widget class="QTableWidget" name="tableWidget">
+          <widget class="QTableWidget" name="tblProgram">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -355,7 +355,7 @@
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
-          <widget class="QPushButton" name="pbZeroout">
+          <widget class="QPushButton" name="btZeroout">
            <property name="font">
             <font>
              <pointsize>12</pointsize>
@@ -370,7 +370,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="pbDownload">
+          <widget class="QPushButton" name="btDownload">
            <property name="font">
             <font>
              <pointsize>12</pointsize>
@@ -385,7 +385,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="pbUpload">
+          <widget class="QPushButton" name="btUpload">
            <property name="font">
             <font>
              <pointsize>12</pointsize>

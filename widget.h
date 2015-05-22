@@ -25,6 +25,9 @@ private:
 
 private slots:
     void cycle();
+    void upload();
+    void download();
+    void zeroout();
 };
 
 #endif // WIDGET_H
