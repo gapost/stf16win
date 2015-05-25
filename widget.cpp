@@ -114,6 +114,27 @@ void Widget::cycle()
 
     updateStatus(v[0]);
 
+    // read dwell timer 324 - 325(elapsed)
+    addr = 324;
+    if (modbus_read_input_registers(ctx,addr,2,v)==-1)
+    {
+        QMessageBox::critical(this,"Read failed due to modbus error",QString(modbus_strerror(errno)));
+        return;
+    }
+
+    ui->edtTimeElapsed->setText(QString("%1 / %2").arg(v[1]).arg(v[0]));
+
+    // read running cycle 332 - 333(elapsed)
+    addr = 332;
+    if (modbus_read_input_registers(ctx,addr,2,v)==-1)
+    {
+        QMessageBox::critical(this,"Read failed due to modbus error",QString(modbus_strerror(errno)));
+        return;
+    }
+
+    ui->edtCycle->setText(QString("%1 / %2").arg(v[1]).arg(v[0]));
+
+
 }
 
 void Widget::updateStatus(int v)
@@ -121,6 +142,7 @@ void Widget::updateStatus(int v)
     ui->btRun->setEnabled(v==0 || v==2);
     ui->btReset->setEnabled(v!=0);
     ui->btHold->setEnabled(v==1);
+    ui->btDownload->setEnabled(v==0);
 }
 
 void Widget::upload()
