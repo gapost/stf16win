@@ -4,13 +4,17 @@
 #include <QTimer>
 #include <QMessageBox>
 #include <QVariant>
+#include <QCoreApplication>
+#include <QProgressDialog>
+#include <QTime>
 
 #include <modbus.h>
 
 Widget::Widget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::Widget),
-    ctx_(0)
+    ctx_(0),
+    block_cycle_(false)
 {
     ui->setupUi(this);
 
@@ -125,18 +129,46 @@ void Widget::download()
     const int addr = 1280; // starting address
     modbus_t* ctx = (modbus_t*)ctx_;
 
+    QProgressDialog progress("Sending parameters...", "Abort", 0, nt, this);
+    progress.setWindowModality(Qt::WindowModal);
+    progress.show();
+
+    block_cycle_ = true;
+
     for(int is=0; is<ns; is++)
     {
         for(int j=0; j<3; j++)
         {
+            progress.setValue(is*3 + j + 1);
+
+            if (progress.wasCanceled())
+                break;
+
             QTableWidgetItem* it = ui->tblProgram->item(is,j);
-            v[is*3+j] = it->data(Qt::DisplayRole).toInt();
+            //v[is*3+j] = it->data(Qt::DisplayRole).toInt();
+
+            int reg = addr + is*3 +j;
+            if (modbus_write_register(ctx,reg,it->data(Qt::DisplayRole).toInt())==-1) {
+                QMessageBox::critical(this,"Error",
+                                      QString("Download of %1 failed with error %2").arg(reg).arg(modbus_strerror(errno)));
+                return;
+            }
+
+            // wait 1 s
+            QTime t;
+            t.start();
+            while(t.elapsed()<300)
+                QCoreApplication::processEvents(QEventLoop::AllEvents,50);
+
+
         }
     }
 
-    if (modbus_write_registers(ctx,addr,nt,v)==-1) {
+     block_cycle_ = false;
+
+    /*if (modbus_write_registers(ctx,addr,nt,v)==-1) {
         QMessageBox::critical(this,"Download failed due to modbus error",QString(modbus_strerror(errno)));
-    }
+    }*/
 
 }
 

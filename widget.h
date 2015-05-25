@@ -21,6 +21,8 @@ private:
 
     void* ctx_;
 
+    bool block_cycle_;
+
     bool open();
 
 private slots:
