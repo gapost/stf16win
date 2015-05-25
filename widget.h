@@ -24,6 +24,7 @@ private:
     bool block_cycle_;
 
     bool open();
+    void updateStatus(int v);
 
 private slots:
     void cycle();

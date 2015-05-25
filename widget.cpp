@@ -67,24 +67,56 @@ void Widget::cycle()
     if (!ctx_) return;
 
     int addr;
-    uint16_t v;
+    uint16_t v[8];
     modbus_t* ctx = (modbus_t*)ctx_;
 
-    // temperature
+    // read registers 1 - 5
     addr = 1;
-    modbus_read_input_registers(ctx,addr,1,&v);
-    ui->lcdT->display((int)v);
+    if (modbus_read_input_registers(ctx,addr,5,v)==-1)
+    {
+        QMessageBox::critical(this,"Read failed due to modbus error",QString(modbus_strerror(errno)));
+        return;
+    }
 
-    // setpoint
-    addr = 24;
-    modbus_read_input_registers(ctx,addr,1,&v);
-    ui->lcdTset->display((int)v);
+    // temperature
+    ui->lcdT->display((int)(v[0]));
 
-    // output
-    addr = 4;
-    modbus_read_input_registers(ctx,addr,1,&v);
-    ui->lcdPower->display((int)v);
+    // target setpoint
+    ui->lcdTargetSetpoint->display((int)(v[1]));
 
+    // working setpoint
+    ui->lcdWorkingSetpoint->display((int)(v[4]));
+
+    // working output
+    ui->lcdWorkingSetpoint->display((int)(v[3]));
+
+    // read register 23
+    addr = 23;
+    if (modbus_read_input_registers(ctx,addr,1,v)==-1)
+    {
+        QMessageBox::critical(this,"Read failed due to modbus error",QString(modbus_strerror(errno)));
+        return;
+    }
+
+    QString msg;
+    switch (v[0])
+    {
+    case 0: msg = "Reset"; break;
+    case 1: msg = "Run  "; break;
+    case 2: msg = "Hold "; break;
+    case 3: msg = "End  "; break;
+    }
+    ui->lcdStatus->display(msg);
+
+    updateStatus(v[0]);
+
+}
+
+void Widget::updateStatus(int v)
+{
+    ui->btRun->setEnabled(v!=1);
+    ui->btReset->setEnabled(v!=0);
+    ui->btHold->setEnabled(v==1);
 }
 
 void Widget::upload()
@@ -125,7 +157,6 @@ void Widget::download()
 
     const int ns = 8; // 8 steps
     const int nt = 8*3; // 3 parameters per step
-    uint16_t v[nt];
     const int addr = 1280; // starting address
     modbus_t* ctx = (modbus_t*)ctx_;
 
@@ -175,7 +206,6 @@ void Widget::download()
 void Widget::zeroout()
 {
     const int ns = 8; // 8 steps
-    const int nt = 8*3; // 3 parameters per step
 
 
     for(int is=0; is<ns; is++)
