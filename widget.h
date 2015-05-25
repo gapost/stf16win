@@ -31,6 +31,9 @@ private slots:
     void upload();
     void download();
     void zeroout();
+    void onRun();
+    void onHold();
+    void onReset();
 };
 
 #endif // WIDGET_H

@@ -35,6 +35,10 @@ Widget::Widget(QWidget *parent) :
     connect(ui->btDownload,SIGNAL(clicked()),this,SLOT(download()));
     connect(ui->btUpload,SIGNAL(clicked()),this,SLOT(upload()));
     connect(ui->btZeroout,SIGNAL(clicked()),this,SLOT(zeroout()));
+
+    connect(ui->btRun,SIGNAL(clicked()),this,SLOT(onRun()));
+    connect(ui->btHold,SIGNAL(clicked()),this,SLOT(onHold()));
+    connect(ui->btReset,SIGNAL(clicked()),this,SLOT(onReset()));
 }
 
 Widget::~Widget()
@@ -88,7 +92,7 @@ void Widget::cycle()
     ui->lcdWorkingSetpoint->display((int)(v[4]));
 
     // working output
-    ui->lcdWorkingSetpoint->display((int)(v[3]));
+    ui->lcdPower->display((int)(v[3]));
 
     // read register 23
     addr = 23;
@@ -106,7 +110,7 @@ void Widget::cycle()
     case 2: msg = "Hold "; break;
     case 3: msg = "End  "; break;
     }
-    ui->lcdStatus->display(msg);
+    ui->edtStatus->setText(msg);
 
     updateStatus(v[0]);
 
@@ -114,7 +118,7 @@ void Widget::cycle()
 
 void Widget::updateStatus(int v)
 {
-    ui->btRun->setEnabled(v!=1);
+    ui->btRun->setEnabled(v==0 || v==2);
     ui->btReset->setEnabled(v!=0);
     ui->btHold->setEnabled(v==1);
 }
@@ -215,5 +219,36 @@ void Widget::zeroout()
             QTableWidgetItem* it = ui->tblProgram->item(is,j);
             it->setData(Qt::DisplayRole,0);
         }
+    }
+}
+
+void Widget::onReset()
+{
+    const int addr = 23; // address of timer status T.STAT
+    modbus_t* ctx = (modbus_t*)ctx_;
+
+    if (modbus_write_register(ctx,addr,0)==-1) {
+        QMessageBox::critical(this,"Error",
+                              QString("Writing 0 to T.STAT(%1) failed with error %2").arg(addr).arg(modbus_strerror(errno)));
+    }
+}
+void Widget::onRun()
+{
+    const int addr = 23; // address of timer status T.STAT
+    modbus_t* ctx = (modbus_t*)ctx_;
+
+    if (modbus_write_register(ctx,addr,1)==-1) {
+        QMessageBox::critical(this,"Error",
+                              QString("Writing 1 to T.STAT(%1) failed with error %2").arg(addr).arg(modbus_strerror(errno)));
+    }
+}
+void Widget::onHold()
+{
+    const int addr = 23; // address of timer status T.STAT
+    modbus_t* ctx = (modbus_t*)ctx_;
+
+    if (modbus_write_register(ctx,addr,2)==-1) {
+        QMessageBox::critical(this,"Error",
+                              QString("Writing 2 to T.STAT(%1) failed with error %2").arg(addr).arg(modbus_strerror(errno)));
     }
 }
