@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/">
+        <file>3216.png</file>
+        <file>STF16.png</file>
+        <file>STF16small.png</file>
+    </qresource>
+</RCC>

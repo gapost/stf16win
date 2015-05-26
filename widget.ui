@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>434</width>
-    <height>521</height>
+    <width>408</width>
+    <height>551</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -17,30 +17,44 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>Widget</string>
+   <string>STF-16 Widget</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
-    <widget class="QLabel" name="label_3">
-     <property name="font">
-      <font>
-       <family>Georgia</family>
-       <pointsize>24</pointsize>
-       <weight>75</weight>
-       <bold>true</bold>
-       <kerning>true</kerning>
-      </font>
-     </property>
-     <property name="text">
-      <string>&lt;font color=&quot;#0000CC&quot;&gt;STF-16 Furnace&lt;/font&gt;</string>
-     </property>
-     <property name="scaledContents">
-      <bool>true</bool>
-     </property>
-     <property name="margin">
-      <number>10</number>
-     </property>
-    </widget>
+    <layout class="QHBoxLayout" name="horizontalLayout_4">
+     <item>
+      <widget class="QLabel" name="label_3">
+       <property name="font">
+        <font>
+         <family>Georgia</family>
+         <pointsize>24</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+         <kerning>true</kerning>
+        </font>
+       </property>
+       <property name="text">
+        <string>&lt;font color=&quot;#0000CC&quot;&gt;STF-16 Furnace&lt;/font&gt;</string>
+       </property>
+       <property name="scaledContents">
+        <bool>true</bool>
+       </property>
+       <property name="margin">
+        <number>10</number>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_9">
+       <property name="text">
+        <string/>
+       </property>
+       <property name="pixmap">
+        <pixmap resource="stf16win.qrc">:/STF16small.png</pixmap>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
    <item>
     <widget class="QToolBox" name="toolBox">
@@ -51,15 +65,15 @@
       </font>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="page">
       <property name="geometry">
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>416</width>
-        <height>343</height>
+        <width>390</width>
+        <height>320</height>
        </rect>
       </property>
       <property name="font">
@@ -71,6 +85,9 @@
        <string>Real Time Display</string>
       </attribute>
       <layout class="QFormLayout" name="formLayout_2">
+       <property name="fieldGrowthPolicy">
+        <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+       </property>
        <item row="0" column="0">
         <widget class="QLabel" name="label">
          <property name="text">
@@ -215,8 +232,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>416</width>
-        <height>343</height>
+        <width>390</width>
+        <height>320</height>
        </rect>
       </property>
       <attribute name="label">
@@ -374,8 +391,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>416</width>
-        <height>343</height>
+        <width>373</width>
+        <height>321</height>
        </rect>
       </property>
       <attribute name="label">
@@ -525,6 +542,8 @@
   </layout>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <resources/>
+ <resources>
+  <include location="stf16win.qrc"/>
+ </resources>
  <connections/>
 </ui>

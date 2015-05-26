@@ -32,9 +32,17 @@ CONFIG(debug, debug|release) {
 }
 
 DISTFILES += \
-    README.md
+    README.md \
+    STF16.jpg \
+    STF16.png \
+    STF16small.png \
+    STF16.ico \
+    STF16small.ico
 
 OTHER_FILES += \
     stf16win.rc \
     3216.png \
     3216.ico
+
+RESOURCES += \
+    stf16win.qrc
