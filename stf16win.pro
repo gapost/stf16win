@@ -11,6 +11,9 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = stf16win
 TEMPLATE = app
 
+#RESOURCES     = stf16win.qrc
+win32:RC_FILE = stf16win.rc
+
 
 SOURCES += main.cpp\
         widget.cpp
@@ -30,3 +33,8 @@ CONFIG(debug, debug|release) {
 
 DISTFILES += \
     README.md
+
+OTHER_FILES += \
+    stf16win.rc \
+    3216.png \
+    3216.ico

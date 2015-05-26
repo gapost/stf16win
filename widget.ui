@@ -325,6 +325,9 @@
        </item>
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <property name="topMargin">
+          <number>20</number>
+         </property>
          <item>
           <widget class="QPushButton" name="btRun">
            <property name="text">
@@ -424,7 +427,7 @@
             <number>8</number>
            </property>
            <property name="columnCount">
-            <number>6</number>
+            <number>3</number>
            </property>
            <row/>
            <row/>
@@ -449,9 +452,6 @@
              <string>Ramp</string>
             </property>
            </column>
-           <column/>
-           <column/>
-           <column/>
           </widget>
          </item>
          <item>

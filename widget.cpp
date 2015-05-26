@@ -92,7 +92,7 @@ void Widget::cycle()
     ui->lcdWorkingSetpoint->display((int)(v[4]));
 
     // working output
-    ui->lcdPower->display((int)(v[3]));
+    ui->lcdPower->display(0.1*v[3]);
 
     // read register 23
     addr = 23;
@@ -114,25 +114,25 @@ void Widget::cycle()
 
     updateStatus(v[0]);
 
-    // read dwell timer 324 - 325(elapsed)
-    addr = 324;
+    // read dwell timer 325 - 326(elapsed, remaining)
+    addr = 325;
     if (modbus_read_input_registers(ctx,addr,2,v)==-1)
     {
         QMessageBox::critical(this,"Read failed due to modbus error",QString(modbus_strerror(errno)));
         return;
     }
 
-    ui->edtTimeElapsed->setText(QString("%1 / %2").arg(v[1]).arg(v[0]));
+    ui->edtTimeElapsed->setText(QString("%1 min").arg(v[0]));
 
     // read running cycle 332 - 333(elapsed)
-    addr = 332;
-    if (modbus_read_input_registers(ctx,addr,2,v)==-1)
+    addr = 333;
+    if (modbus_read_input_registers(ctx,addr,1,v)==-1)
     {
         QMessageBox::critical(this,"Read failed due to modbus error",QString(modbus_strerror(errno)));
         return;
     }
 
-    ui->edtCycle->setText(QString("%1 / %2").arg(v[1]).arg(v[0]));
+    ui->edtCycle->setText(QString("%1").arg(v[0]));
 
 
 }
