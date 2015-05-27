@@ -7,6 +7,10 @@
 #include <QCoreApplication>
 #include <QProgressDialog>
 #include <QTime>
+#include <QDate>
+#include <QDateTime>
+#include <QDir>
+#include <QTextStream>
 
 #include <modbus.h>
 
@@ -39,6 +43,25 @@ Widget::Widget(QWidget *parent) :
     connect(ui->btRun,SIGNAL(clicked()),this,SLOT(onRun()));
     connect(ui->btHold,SIGNAL(clicked()),this,SLOT(onHold()));
     connect(ui->btReset,SIGNAL(clicked()),this,SLOT(onReset()));
+
+    // log file
+    // set the name
+    QDir logDir;
+    if (!logDir.cd("log")) // if not existing create log dir
+    {
+        logDir.mkdir("log");
+        logDir.cd("log");
+    }
+    QString fname(logDir.absolutePath());
+    fname += QChar('/');
+    fname += "stf16_";
+    fname += QDate::currentDate().toString("ddMMyyyy");
+    fname += ".log";
+
+    logFile.setFileName(fname);
+    QFile::OpenMode mode = logFile.exists() ? QFile::Append : QFile::Truncate;
+    mode |= QIODevice::WriteOnly;
+    logFile.open(mode);
 }
 
 Widget::~Widget()
@@ -74,6 +97,8 @@ void Widget::cycle()
     uint16_t v[8];
     modbus_t* ctx = (modbus_t*)ctx_;
 
+    int T,Tsp,Twsp,W;
+
     // read registers 1 - 5
     addr = 1;
     if (modbus_read_input_registers(ctx,addr,5,v)==-1)
@@ -83,16 +108,20 @@ void Widget::cycle()
     }
 
     // temperature
-    ui->lcdT->display((int)(v[0]));
+    T = v[0];
+    ui->lcdT->display(T);
 
     // target setpoint
-    ui->lcdTargetSetpoint->display((int)(v[1]));
+    Tsp = v[1];
+    ui->lcdTargetSetpoint->display(Tsp);
 
     // working setpoint
-    ui->lcdWorkingSetpoint->display((int)(v[4]));
+    Twsp = v[4];
+    ui->lcdWorkingSetpoint->display(Twsp);
 
     // working output
-    ui->lcdPower->display(0.1*v[3]);
+    W = v[3];
+    ui->lcdPower->display(0.1*W);
 
     // read register 23
     addr = 23;
@@ -134,7 +163,19 @@ void Widget::cycle()
 
     ui->edtCycle->setText(QString("%1").arg(v[0]));
 
+    // write to log file
+    if (!logFile.isOpen()) return;
 
+    QTextStream stream(&logFile);
+
+    QDateTime cdt = QDateTime::currentDateTime();
+    stream << cdt.toString("dd.MM.yyyy") << '\t'
+           << cdt.toString("hh:mm:ss") << '\t'
+           << msg << '\t'
+           << T << '\t'
+           << Tsp << '\t'
+           << Twsp << '\t'
+           << W*0.1 << '\n';
 }
 
 void Widget::updateStatus(int v)

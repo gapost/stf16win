@@ -2,7 +2,7 @@
 #define WIDGET_H
 
 #include <QWidget>
-
+#include <QFile>
 
 namespace Ui {
 class Widget;
@@ -19,9 +19,11 @@ public:
 private:
     Ui::Widget *ui;
 
-    void* ctx_;
+    void* ctx_; // modbus context
 
-    bool block_cycle_;
+    bool block_cycle_; // flag to block update cycle
+
+    QFile logFile;
 
     bool open();
     void updateStatus(int v);
